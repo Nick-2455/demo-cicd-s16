@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 
+app.get('/', (req, res) => {
+  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios'] });
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', estado: 'OK', timestamp: new Date().toISOString() });
 });
