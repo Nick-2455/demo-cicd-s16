@@ -7,7 +7,7 @@ app.get('/health', (req, res) => {
 
 app.get('/api/saludo', (req, res) => {
   const nombre = req.query.nombre || 'Mundo';
-  res.json({ mensaje: `hola, ${nombre}!` });
+  res.json({ mensaje: `Hola, ${nombre}!` });
 });
 
 if (process.env.NODE_ENV !== 'test') {
