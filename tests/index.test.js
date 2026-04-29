@@ -30,4 +30,10 @@ describe('API Endpoints', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.version).toBe('1.0.0');
   });
+
+  test('GET /api/status retorna uptime y memoria', async () => {
+    const res = await request(app).get('/api/status');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.ok).toBe(true);
+  });
 });
