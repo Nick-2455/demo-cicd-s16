@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios'] });
+  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios', '/api/tiempo'] });
 });
 
 app.get('/api/status', (req, res) => {
@@ -19,6 +19,11 @@ app.get('/api/saludo', (req, res) => {
     return res.status(400).json({ error: 'Nombre demasiado largo' });
   }
   res.json({ mensaje: `Hola, ${nombre}!` });
+});
+
+app.get('/api/tiempo', (req, res) => {
+  const ciudad = req.query.ciudad || 'Hermosillo';
+  res.json({ lugar: ciudad, grados: 38 }); // bug: campos "lugar" y "grados" incorrectos
 });
 
 if (process.env.NODE_ENV !== 'test') {
