@@ -35,7 +35,7 @@ jobs:
 
   # ── JOB 2: ENTREGA CONTINUA ───────────────────────────────────────
   deploy:
-    name: Build & Push Docker Image
+    name: Build & Deploy
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main'
@@ -44,21 +44,25 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Convertir nombre de repo a minúsculas
-        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Login a GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          node-version: 20.x
+          cache: 'npm'
 
-      - name: Build & Push imagen Docker
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      - name: Instalar dependencias (producción)
+        run: npm ci --omit=dev
+
+      - name: Build artefacto
+        run: |
+          mkdir -p dist
+          cp -r src dist/
+          cp package.json dist/
+          echo "Build completado: $(date)" > dist/build-info.txt
+          echo "Commit: ${{ github.sha }}" >> dist/build-info.txt
+          cat dist/build-info.txt
+
+      - name: Simular deploy
+        run: |
+          echo "Desplegando versión ${{ github.sha }} a producción..."
+          echo "Deploy exitoso"
