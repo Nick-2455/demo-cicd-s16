@@ -21,6 +21,11 @@ app.get('/api/saludo', (req, res) => {
   res.json({ mensaje: `Hola, ${nombre}!` });
 });
 
+app.get('/api/eco', (req, res) => {
+  const msg = req.query.msg || '';
+  res.json({ eco: msg });
+});
+
 if (process.env.NODE_ENV !== 'test') {
   app.listen(3000, () => console.log('Servidor corriendo en puerto 3000'));
 }
