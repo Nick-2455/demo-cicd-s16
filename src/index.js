@@ -7,6 +7,9 @@ app.get('/health', (req, res) => {
 
 app.get('/api/saludo', (req, res) => {
   const nombre = req.query.nombre || 'Mundo';
+  if (nombre.length > 20) {
+    return res.status(400).json({ error: 'Nombre demasiado largo' });
+  }
   res.json({ mensaje: `Hola, ${nombre}!` });
 });
 
