@@ -18,7 +18,7 @@ app.get('/api/saludo', (req, res) => {
   if (nombre.length > 20) {
     return res.status(400).json({ error: 'Nombre demasiado largo' });
   }
-  res.json({ mensaje: `hola, ${nombre}!` });
+  res.json({ mensaje: `Hola, ${nombre}!` });
 });
 
 if (process.env.NODE_ENV !== 'test') {
