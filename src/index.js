@@ -9,6 +9,10 @@ app.get('/api/version', (req, res) => {
   res.json({ version: '1.0.0', env: process.env.NODE_ENV || 'production' });
 });
 
+app.get('/api/status', (req, res) => {
+  res.json({ uptime: process.uptime(), memory: process.memoryUsage().rss, ok: true });
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', estado: 'OK', timestamp: new Date().toISOString() });
 });
