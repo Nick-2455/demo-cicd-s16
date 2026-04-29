@@ -1,112 +1,192 @@
-# Guion Demo — Seminario 16 CI/CD
-## Instrucciones de uso
-
-- **[NICK DICE]** — lo que dices en voz alta al profe
-- **[MOSTRAR]** — lo que abres/señalas en pantalla
-- **[CLAUDE]** — lo que Claude corre (tú solo dices "siguiente acto")
-- **[ESPERAR]** — pausa hasta que el pipeline termine
-
-Tabs abiertas durante toda la demo:
-1. GitHub Actions — `github.com/Nick-2455/demo-cicd-s16/actions`
-2. PR abierto (cambia por acto)
-3. Railway — `railway.app`
-4. App en producción — `demo-cicd-s16-production.up.railway.app`
+# Guion Demo — CI/CD con GitHub Actions + Railway
+## Seminario 16
 
 ---
 
-## ACTO 1 — Feature nueva, pipeline verde
+## Convenciones
+
+- **[NICK DICE]** — lo que dices en voz alta
+- **[MOSTRAR]** — lo que abres o señalas en pantalla
+- **[CLAUDE CORRE]** — lo que Claude ejecuta (tú solo dices "siguiente acto")
+- **[ESPERAR]** — pausa hasta que el pipeline o deploy terminen
+
+### Tabs abiertas durante toda la demo
+| Tab | URL |
+|-----|-----|
+| 1 | `github.com/Nick-2455/demo-cicd-s16/actions` |
+| 2 | PR activo (cambia por acto) |
+| 3 | `railway.app` — dashboard del proyecto |
+| 4 | `demo-cicd-s16-production.up.railway.app/api/status` |
+
+---
+
+## ACTO 1 — Quitar un endpoint y verlo desaparecer en producción
+
+### Objetivo
+Demostrar el ciclo CI → CD completo con un cambio visible y real en producción.
+
+---
+
+**[MOSTRAR]** — abrir en browser: `demo-cicd-s16-production.up.railway.app/api/status`
 
 **[NICK DICE]**
-> "Voy a agregar un endpoint nuevo a la API. En equipos reales esto lo haría un compañero en su propia rama."
+> "Este es nuestro servidor en producción en Railway. El endpoint `/api/status` existe y responde ahora mismo."
 
-**[CLAUDE]** — crea rama `feature/endpoint-X`, agrega endpoint + test, abre PR
-
-**[MOSTRAR]** — cambiar a tab de GitHub Actions
+---
 
 **[NICK DICE]**
-> "Automáticamente, sin que yo haga nada, GitHub Actions levantó una VM y está corriendo los tests en Node 18 y 20 en paralelo. Esto es CI — Integración Continua."
+> "Vamos a eliminarlo. En un equipo real esto sería una decisión de arquitectura — limpiar endpoints deprecated. Creo una rama, hago el cambio."
+
+**[CLAUDE CORRE]** — crea rama `feature/remove-status`, elimina el endpoint y su test, hace push, abre PR
+
+---
+
+**[MOSTRAR]** — tab de Actions, el run corriendo en `feature/remove-status`
+
+**[NICK DICE]**
+> "CI arrancó automáticamente. Está verificando que el resto de la app sigue funcionando después de remover ese endpoint. Los tests que quedan deben seguir pasando."
 
 **[ESPERAR]** — pipeline verde (~25s)
 
-**[MOSTRAR]** — el grafo: `[Lint & Test 18x] + [Lint & Test 20x] → [Build & Deploy (skipped)]`
+---
+
+**[MOSTRAR]** — el PR con check verde y botón de merge habilitado
 
 **[NICK DICE]**
-> "Los dos jobs de test pasaron. El job de deploy está skipped porque esto es un PR, no un merge a main. CD solo se activa cuando el código ya fue aprobado y mergeado."
+> "CI aprobó. El cambio es seguro. Mergeamos a main."
 
-**[MOSTRAR]** — el PR en GitHub, botón de merge habilitado
-
-**[NICK DICE]**
-> "GitHub habilitó el merge porque CI pasó. Si hubiera fallado, este botón estaría bloqueado."
-
-**[CLAUDE]** — hace merge del PR
-
-**[MOSTRAR]** — Actions, nuevo run en main con deploy + Railway redesployando
-
-**[NICK DICE]**
-> "Al mergear a main se dispararon CI y CD juntos. Railway está detectando el nuevo commit y redesplegando automáticamente. Eso es CD — Continuous Deployment."
-
-**[ESPERAR]** — Railway termina el deploy
-
-**[MOSTRAR]** — `demo-cicd-s16-production.up.railway.app` con el nuevo endpoint visible
+**[CLAUDE CORRE]** — merge del PR
 
 ---
 
-## ACTO 2 — Bug que CI atrapa, merge bloqueado
+**[MOSTRAR]** — Actions, nuevo run en `main` — señalar el grafo
 
 **[NICK DICE]**
-> "Ahora simulo algo que pasa mucho en equipos reales: alguien sube un cambio apresurado sin correr los tests localmente."
+> "Aquí empieza CD. El merge a main disparó el pipeline de nuevo. Ven el grafo: primero corren los dos jobs de test en paralelo, y solo si ambos pasan, se desbloquea el job de deploy."
 
-**[CLAUDE]** — crea rama `hotfix/X`, introduce bug en el código, abre PR
+**[ESPERAR]** — run en main verde + Railway redesployando (~1 min)
 
-**[MOSTRAR]** — Actions corriendo el nuevo pipeline
+---
+
+**[MOSTRAR]** — Railway dashboard, deployment successful
 
 **[NICK DICE]**
-> "CI está corriendo. El test espera un valor específico pero el código tiene un error. En segundos vamos a saber si hay problema."
+> "Railway detectó el nuevo commit en main y redesplegó automáticamente. Sin que yo tocara nada en el servidor."
+
+**[MOSTRAR]** — browser: `demo-cicd-s16-production.up.railway.app/api/status`
+
+**[NICK DICE]**
+> "El endpoint ya no existe en producción. Lo que mergeamos a main es exactamente lo que está corriendo en el servidor. Eso es Continuous Deployment."
+
+---
+
+## ACTO 2 — Nuevo endpoint con bug: CI falla, CD nunca se activa
+
+### Objetivo
+Demostrar que CI bloquea el merge y que CD nunca corre si los tests fallan.
+
+---
+
+**[NICK DICE]**
+> "Ahora agrego un endpoint nuevo, `/api/eco`, que repite el mensaje que le mandes. Pero voy a cometer un error en el código — el tipo de error que pasa cuando trabajas rápido."
+
+**[CLAUDE CORRE]** — crea rama `feature/endpoint-eco`, agrega el endpoint con un bug (nombre de campo incorrecto en el código), escribe el test correcto, hace push, abre PR
+
+---
+
+**[MOSTRAR]** — Actions, pipeline corriendo en `feature/endpoint-eco`
+
+**[NICK DICE]**
+> "CI está corriendo. El test valida que el endpoint retorne el campo `eco` con el mensaje, pero en el código cometí un error en el nombre del campo."
 
 **[ESPERAR]** — pipeline rojo (~20s)
 
-**[MOSTRAR]** — run rojo, abrir el log del test fallido
+---
+
+**[MOSTRAR]** — el run rojo, abrir el log del step "Ejecutar tests"
 
 **[NICK DICE]**
-> "CI detectó el bug. Ahora miren el PR."
+> "CI detectó el bug. El test esperaba `eco` pero el código retornó `mensaje`. Fallen en segundos antes de llegar a ningún servidor."
 
-**[MOSTRAR]** — el PR con el check rojo y el botón de merge deshabilitado
+**[MOSTRAR]** — el PR con check rojo y botón de merge deshabilitado
 
 **[NICK DICE]**
-> "GitHub bloqueó el merge automáticamente. Este código no puede llegar a main ni a producción mientras el check esté rojo. Sin CI, este bug hubiera llegado directo a los usuarios."
+> "GitHub bloqueó el merge automáticamente. Pero lo más importante — regresen a Actions."
+
+**[MOSTRAR]** — Actions, señalar que el job `Build & Deploy` no corrió
+
+**[NICK DICE]**
+> "El job de deploy ni siquiera se ejecutó. Como `test` falló, el pipeline se detuvo. CD es imposible sin CI. El servidor de Railway no fue tocado. Producción está intacta."
 
 ---
 
-## ACTO 3 — Fix correcto, pipeline verde, deploy a producción
+## ACTO 3 — Fix correcto: CI pasa, CD despliega, endpoint vivo en producción
+
+### Objetivo
+Cerrar el ciclo completo: fix → CI verde → merge → CD → endpoint visible en el browser.
+
+---
 
 **[NICK DICE]**
-> "El dev revisa el log, encuentra el error, lo corrige y sube el fix."
+> "El dev lee el log, entiende el error, corrige el nombre del campo en el código y sube el fix al mismo PR."
 
-**[CLAUDE]** — corrige el bug, hace push al mismo PR
+**[CLAUDE CORRE]** — corrige el bug en el código, hace push a la misma rama
 
-**[MOSTRAR]** — Actions, nuevo run corriendo en la misma rama
+---
 
-**[ESPERAR]** — pipeline verde
+**[MOSTRAR]** — Actions, nuevo run corriendo en `feature/endpoint-eco`
+
+**[NICK DICE]**
+> "CI está corriendo el fix. Mismo proceso — mismo pipeline — pero ahora el código es correcto."
+
+**[ESPERAR]** — pipeline verde (~25s)
+
+---
 
 **[MOSTRAR]** — PR con check verde, botón de merge habilitado
 
 **[NICK DICE]**
-> "CI confirmó que el fix es correcto. Ahora sí podemos mergear."
+> "CI aprobó el fix. Ahora sí podemos mergear con confianza."
 
-**[CLAUDE]** — hace merge del PR
-
-**[MOSTRAR]** — Actions, run en main con CI + CD completo + Railway redesplegando
-
-**[NICK DICE]**
-> "CI corrió de nuevo en main, pasó, y CD desplegó automáticamente a producción. Todo sin intervención manual. Eso es un pipeline de CI/CD completo funcionando en tiempo real."
-
-**[MOSTRAR]** — Railway deployment successful + la app en producción funcionando
+**[CLAUDE CORRE]** — merge del PR
 
 ---
 
-## Para cerrar
+**[MOSTRAR]** — Actions, run en main — señalar el grafo `test → deploy`
 
 **[NICK DICE]**
-> "Resumiendo: cada PR fue validado por CI antes de poder mergearse. Cada merge a main disparó un deploy automático a Railway. El historial de Actions es auditoría completa de qué pasó, cuándo, y si pasó o no."
+> "De nuevo el ciclo completo: tests en paralelo, ambos pasan, job de deploy se activa. Esta vez sí."
 
-**[MOSTRAR]** — vista general de Actions con todos los runs verde/rojo/verde
+**[ESPERAR]** — run en main verde + Railway redesplegando
+
+---
+
+**[MOSTRAR]** — Railway: Deployment successful
+
+**[MOSTRAR]** — browser: `demo-cicd-s16-production.up.railway.app/api/eco?msg=hola`
+
+**[NICK DICE]**
+> "El endpoint está vivo en producción. Responde con `{ eco: 'hola' }`. El código que escribimos hace 2 minutos ya está corriendo en un servidor real, validado, sin intervención manual."
+
+---
+
+## Cierre
+
+**[MOSTRAR]** — vista general de Actions con todos los runs
+
+**[NICK DICE]**
+> "Este es el historial completo de la demo:
+> — Acto 1: cambio limpio → CI verde → CD despliega → producción actualizada.
+> — Acto 2: bug → CI rojo → merge bloqueado → CD nunca corre → producción intacta.
+> — Acto 3: fix → CI verde → CD despliega → endpoint nuevo en producción.
+>
+> Eso es CI/CD: una red de seguridad automatizada que protege producción y elimina el deploy manual."
+
+---
+
+## Reset para volver a correr la demo
+
+Dile a Claude: **"resetea"**
+
+Limpia todas las ramas `feature/*` y `hotfix/*` y cierra los PRs abiertos.
+La app en Railway queda en el estado post-demo (sin `/api/status`, con `/api/eco`).
