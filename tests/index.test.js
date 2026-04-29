@@ -31,4 +31,10 @@ describe('API Endpoints', () => {
     expect(res.body.ok).toBe(true);
   });
 
+  test('GET /api/clima retorna ciudad y temperatura', async () => {
+    const res = await request(app).get('/api/clima?ciudad=Hermosillo');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.ciudad).toBe('Hermosillo');
+    expect(res.body.temperatura).toBe(38);
+  });
 });
