@@ -170,6 +170,21 @@ Cerrar el ciclo completo: fix → CI verde → merge → CD → endpoint visible
 
 ---
 
+## Pregunta frecuente: ¿por qué el merge no es automático?
+
+**Si el profe o alguien pregunta:** *"¿No debería estar todo automatizado?"*
+
+**[NICK DICE]**
+> "El merge es manual intencionalmente — es el code review. Nadie quiere que cualquier push llegue a producción sin que alguien lo revise. Lo que sí está 100% automatizado es todo lo que pasa antes y después: CI corre solo en cada push, y CD se dispara solo después del merge."
+
+```
+push → CI automático → merge manual (code review) → CI + CD automático → Railway despliega
+```
+
+> "Si quisieras cero intervención humana existe trunk-based development: push directo a main sin PR. Pero requiere mucha confianza en los tests y es menos común en equipos."
+
+---
+
 ## Cierre
 
 **[MOSTRAR]** — vista general de Actions con todos los runs
