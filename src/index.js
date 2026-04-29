@@ -2,11 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios', '/api/version'] });
-});
-
-app.get('/api/version', (req, res) => {
-  res.json({ version: '1.0.0', env: process.env.NODE_ENV || 'production' });
+  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios'] });
 });
 
 app.get('/api/status', (req, res) => {
