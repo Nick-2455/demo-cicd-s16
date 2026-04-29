@@ -23,7 +23,7 @@ app.get('/api/saludo', (req, res) => {
 
 app.get('/api/eco', (req, res) => {
   const msg = req.query.msg || '';
-  res.json({ mensaje: msg });  // bug: campo incorrecto, debería ser "eco"
+  res.json({ eco: msg });
 });
 
 if (process.env.NODE_ENV !== 'test') {
