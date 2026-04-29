@@ -23,7 +23,7 @@ app.get('/api/saludo', (req, res) => {
 
 app.get('/api/tiempo', (req, res) => {
   const ciudad = req.query.ciudad || 'Hermosillo';
-  res.json({ lugar: ciudad, grados: 38 }); // bug: campos "lugar" y "grados" incorrectos
+  res.json({ ciudad: ciudad, temperatura: 38 });
 });
 
 if (process.env.NODE_ENV !== 'test') {
