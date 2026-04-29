@@ -18,4 +18,10 @@ describe('API Endpoints', () => {
     const res = await request(app).get('/api/saludo');
     expect(res.body.mensaje).toBe('Hola, Mundo!');
   });
+
+  test('GET /api/saludo rechaza nombres demasiado largos', async () => {
+    const res = await request(app).get('/api/saludo?nombre=NombreMuyLargoQueExcedeElLimite');
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toBe('Nombre demasiado largo');
+  });
 });
