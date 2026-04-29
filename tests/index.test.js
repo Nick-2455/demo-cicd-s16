@@ -24,4 +24,10 @@ describe('API Endpoints', () => {
     expect(res.statusCode).toBe(400);
     expect(res.body.error).toBe('Nombre demasiado largo');
   });
+
+  test('GET /api/version retorna la version de la app', async () => {
+    const res = await request(app).get('/api/version');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.version).toBe('1.0.0');
+  });
 });
