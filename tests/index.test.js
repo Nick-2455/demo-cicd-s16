@@ -31,9 +31,4 @@ describe('API Endpoints', () => {
     expect(res.body.ok).toBe(true);
   });
 
-  test('GET /api/eco repite el mensaje enviado', async () => {
-    const res = await request(app).get('/api/eco?msg=hola');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.eco).toBe('hola');
-  });
 });

@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios', '/api/eco'] });
+  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios'] });
 });
 
 app.get('/api/status', (req, res) => {
@@ -19,11 +19,6 @@ app.get('/api/saludo', (req, res) => {
     return res.status(400).json({ error: 'Nombre demasiado largo' });
   }
   res.json({ mensaje: `Hola, ${nombre}!` });
-});
-
-app.get('/api/eco', (req, res) => {
-  const msg = req.query.msg || '';
-  res.json({ eco: msg });
 });
 
 if (process.env.NODE_ENV !== 'test') {
