@@ -18,4 +18,9 @@ describe('API Endpoints', () => {
     const res = await request(app).get('/api/saludo');
     expect(res.body.mensaje).toBe('Hola, Mundo!');
   });
+
+  test('GET /api/adios responde correctamente', async () => {
+    const res = await request(app).get('/api/adios?nombre=CI');
+    expect(res.body.mensaje).toBe('Adios, CI!');
+  });
 });
