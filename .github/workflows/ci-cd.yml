@@ -44,6 +44,9 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
+      - name: Convertir nombre de repo a minúsculas
+        run: echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Login a GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -57,5 +60,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
