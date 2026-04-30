@@ -13,13 +13,6 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', estado: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.get('/api/saludo', (req, res) => {
-  const nombre = req.query.nombre || 'Mundo';
-  if (nombre.length > 20) {
-    return res.status(400).json({ error: 'Nombre demasiado largo' });
-  }
-  res.json({ mensaje: `Hola, ${nombre}!` });
-});
 
 app.get('/api/tiempo', (req, res) => {
   const ciudad = req.query.ciudad || 'Hermosillo';
