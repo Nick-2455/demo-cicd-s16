@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/saludo', '/api/adios', '/api/tiempo'] });
+  res.json({ app: 'demo-cicd-s16', status: 'running', endpoints: ['/health', '/api/adios', '/api/tiempo'] });
 });
 
 app.get('/api/status', (req, res) => {
