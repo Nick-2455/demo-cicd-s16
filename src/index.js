@@ -10,7 +10,7 @@ app.get('/api/status', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.status(500).json({ status: 'ERROR', estado: 'ERROR', timestamp: new Date().toISOString() });
+  res.status(200).json({ status: 'OK', estado: 'OK', timestamp: new Date().toISOString() });
 });
 
 
