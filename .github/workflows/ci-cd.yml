@@ -7,7 +7,6 @@ on:
     branches: [ main ]
 
 jobs:
-  # ── JOB 1: INTEGRACIÓN CONTINUA ──────────────────────────────────
   test:
     name: Lint & Test
     runs-on: ubuntu-latest
@@ -29,7 +28,6 @@ jobs:
         env:
           NODE_ENV: test
 
-  # ── JOB 2: DESPLIEGUE CONTINUO ───────────────────────────────────────
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
@@ -44,7 +42,6 @@ jobs:
 
       - name: Instalar dependencias (producción)
         run: npm ci --omit=dev
-
 
       - name: Build artefacto
         run: |
