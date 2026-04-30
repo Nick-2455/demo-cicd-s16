@@ -13,17 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [18, 20]
+    container:
+      image: node:${{ matrix.node-version }}-alpine
 
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
 
       - name: Instalar dependencias
         run: npm ci
@@ -33,25 +29,22 @@ jobs:
         env:
           NODE_ENV: test
 
-  # ── JOB 2: ENTREGA CONTINUA ───────────────────────────────────────
+  # ── JOB 2: DESPLIEGUE CONTINUO ───────────────────────────────────────
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main'
+    container:
+      image: node:20-alpine
 
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-
       - name: Instalar dependencias (producción)
         run: npm ci --omit=dev
+
 
       - name: Build artefacto
         run: |
